@@ -117,7 +117,7 @@ class HindiSum(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, split_path, split_name):
         """Yields examples."""
 
-        fdf = pd.read_csv(split_path)[:100]
+        fdf = pd.read_csv(split_path)[:100000]
         articles = fdf['article'].fillna('').str.strip().tolist()
         summaries = fdf['headline'].fillna('').str.strip().tolist()
 
