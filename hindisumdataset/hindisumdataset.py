@@ -51,8 +51,9 @@ _URL_SPLITS = {
     "dev": os.path.join(_URL_DATA, 'test.csv'),
 }
 
-_DOCUMENT = 'article'
-_SUMMARY = 'headline'
+_DOCUMENT = 'document'
+_SUMMARY = 'summary'
+_ID = 'id'
 
 _REMOVE_LINES = set(
     [
@@ -84,6 +85,7 @@ class HindiSum(datasets.GeneratorBasedBuilder):
                 {
                     _DOCUMENT: datasets.Value("string"),
                     _SUMMARY: datasets.Value("string"),
+                    _ID: datasets.Value("string"),
                 }
             ),
             supervised_keys=(_DOCUMENT, _SUMMARY),
@@ -137,5 +139,7 @@ class HindiSum(datasets.GeneratorBasedBuilder):
                 final_articles.append(articles[idx])
                 final_summaries.append(summaries[idx])
 
+        ids = [str(idx) for idx in range(len(final_articles))]
+
         for idx, (article, summary) in enumerate(zip(final_articles, final_summaries)):
-            yield str(idx), {_DOCUMENT: article, _SUMMARY: summary}
+            yield ids[idx], {_DOCUMENT: article, _SUMMARY: summary, _ID: ids[idx]}
