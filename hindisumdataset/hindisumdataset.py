@@ -117,9 +117,25 @@ class HindiSum(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, split_path, split_name):
         """Yields examples."""
 
-        fdf = pd.read_csv(split_path)[:100000]
+        if 'train.csv' in split_path:
+            max_articles = 100000
+        else:
+            max_articles = 20000
+
+        # Define some variables for preprocessing
+        max_text_len = 300
+        max_summary_len = 16
+
+        fdf = pd.read_csv(split_path)[:max_articles]
         articles = fdf['article'].fillna('').str.strip().tolist()
         summaries = fdf['headline'].fillna('').str.strip().tolist()
 
-        for idx, (article, summary) in enumerate(zip(articles, summaries)):
+        final_articles, final_summaries = [], []
+        for idx in range(len(articles)):
+            if len(summaries[idx].split()) <= max_summary_len and len(summaries[idx].split()) > 1 and\
+                 len(articles[idx].split()) <= max_text_len and len(articles[idx].split()) > 1:
+                final_articles.append(articles[idx])
+                final_summaries.append(summaries[idx])
+
+        for idx, (article, summary) in enumerate(zip(final_articles, final_summaries)):
             yield str(idx), {_DOCUMENT: article, _SUMMARY: summary}
